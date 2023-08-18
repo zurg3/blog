@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blog</title>
+    <style>
+      body {
+        font-family: Verdana, sans-serif;
+      }
+
+      a {
+        color: Blue;
+        text-decoration: none;
+      }
+
+      a:visited {
+        color: Blue;
+      }
+
+      a:hover {
+        color: Purple;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      var xmlhttp = new XMLHttpRequest();
+      var parser = new DOMParser();
+
+      xmlhttp.open('GET', 'https://zurg3.github.io/jekyll-blog/', false);
+      xmlhttp.send();
+
+      var blog = parser.parseFromString(xmlhttp.responseText, 'text/html');
+      var blog_posts = blog.getElementsByClassName('post-list')[0].children;
+
+      document.write(`<h1>Blog</h1>`);
+      document.write(`<br>`);
+      document.write(`<table>`);
+        document.write(`<tr>`);
+          document.write(`<th align="left">Date</th>`);
+          document.write(`<th align="left">Title</th>`);
+        document.write(`</tr>`);
+        for (var i = 0; i < blog_posts.length; i++) {
+          document.write(`<tr>`);
+            document.write(`<td class="post_date">${blog_posts[i].children[0].innerText}</td>`);
+            document.write(`<td class="post_title">`);
+              document.write(`<a href="https://zurg3.github.io${blog_posts[i].children[1].children[0].getAttribute('href')}">${blog_posts[i].children[1].children[0].innerText.trim()}</a>`);
+            document.write(`</td>`);
+          document.write(`</tr>`);
+        }
+      document.write(`</table>`);
+    </script>
+  </body>
+</html>

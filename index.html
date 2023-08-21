@@ -23,6 +23,10 @@
         color: Purple;
         text-decoration: underline;
       }
+
+      #version {
+        color: Silver;
+      }
     </style>
   </head>
   <body>
@@ -36,6 +40,31 @@
         }
       }
 
+      function load_post() {
+        document.write(`<td class="post_date">${post_date}</td>`);
+        document.write(`<td class="post_title">`);
+          document.write(`<a href="${post_link}">${post_title}</a>`);
+        document.write(`</td>`);
+        document.write(`<td class="post_id">${post_id}</td>`);
+        document.write(`<td class="iv_link">`);
+          document.write(`<input type="button" class="iv_link_button" value="Copy" data-clipboard-text="${post_iv_link}" data-clipboard-action="copy">`);
+        document.write(`</td>`);
+      }
+
+      function load_post_mobile() {
+        document.write(`<td>`);
+          document.write(`<span class="post_date">${post_date}</span>`);
+          document.write(`<span> </span>`);
+          document.write(`<span class="post_title">`);
+            document.write(`<a href="${post_link}">${post_title}</a>`);
+          document.write(`</span>`);
+        document.write(`</td>`);
+      }
+
+      const version = '1.3';
+
+      const blog_link = 'https://zurg3.github.io/jekyll-blog/';
+
       var current_url = new URL(window.location);
       var params = Object.fromEntries(current_url.searchParams.entries());
 
@@ -44,15 +73,18 @@
 
       new ClipboardJS('.iv_link_button');
 
-      xmlhttp.open('GET', 'https://zurg3.github.io/jekyll-blog/', false);
+      xmlhttp.open('GET', blog_link, false);
       xmlhttp.send();
 
       var blog = parser.parseFromString(xmlhttp.responseText, 'text/html');
       var blog_posts = blog.getElementsByClassName('post-list')[0].children;
       var post_counter = 0;
 
-      var post_link = '';
+      var post_title = '';
+      var post_date = '';
       var post_id = 0;
+      var post_link = '';
+      var post_iv_link = '';
 
       const iv_rhash = 'e779dfb8ed6d71';
 
@@ -88,29 +120,19 @@
         document.write(`</tr>`);
       }
       for (var i = 0; i < blog_posts.length; i++) {
+        post_title = blog_posts[i].children[1].children[0].innerText.trim();
+        post_date = blog_posts[i].children[0].innerText;
         post_id = blog_posts[i].children[1].children[0].getAttribute('href').split('/')[2];
-        post_link = `https://zurg3.github.io/jekyll-blog/${post_id}`;
+        post_link = `${blog_link}${post_id}`;
+        post_iv_link = `https://t.me/iv?url=${post_link}&rhash=${iv_rhash}`;
 
         if (current_url.search == '') {
           document.write(`<tr>`);
           if (!is_mobile()) {
-            document.write(`<td class="post_date">${blog_posts[i].children[0].innerText}</td>`);
-            document.write(`<td class="post_title">`);
-              document.write(`<a href="${post_link}">${blog_posts[i].children[1].children[0].innerText.trim()}</a>`);
-            document.write(`</td>`);
-            document.write(`<td class="post_id">${post_id}</td>`);
-            document.write(`<td class="iv_link">`);
-              document.write(`<input type="button" class="iv_link_button" value="Copy" data-clipboard-text="https://t.me/iv?url=${post_link}&rhash=${iv_rhash}" data-clipboard-action="copy">`);
-            document.write(`</td>`);
+            load_post();
           }
           else {
-            document.write(`<td>`);
-              document.write(`<span class="post_date">${blog_posts[i].children[0].innerText}</span>`);
-              document.write(`<span> </span>`);
-              document.write(`<span class="post_title">`);
-                document.write(`<a href="${post_link}">${blog_posts[i].children[1].children[0].innerText.trim()}</a>`);
-              document.write(`</span>`);
-            document.write(`</td>`);
+            load_post_mobile();
           }
           document.write(`</tr>`);
 
@@ -120,23 +142,10 @@
           if (params['year'] == blog_posts[i].children[0].innerText.split('.')[2]) {
             document.write(`<tr>`);
             if (!is_mobile()) {
-              document.write(`<td class="post_date">${blog_posts[i].children[0].innerText}</td>`);
-              document.write(`<td class="post_title">`);
-                document.write(`<a href="${post_link}">${blog_posts[i].children[1].children[0].innerText.trim()}</a>`);
-              document.write(`</td>`);
-              document.write(`<td class="post_id">${post_id}</td>`);
-              document.write(`<td class="iv_link">`);
-                document.write(`<input type="button" class="iv_link_button" value="Copy" data-clipboard-text="https://t.me/iv?url=${post_link}&rhash=${iv_rhash}" data-clipboard-action="copy">`);
-              document.write(`</td>`);
+              load_post();
             }
             else {
-              document.write(`<td>`);
-                document.write(`<span class="post_date">${blog_posts[i].children[0].innerText}</span>`);
-                document.write(`<span> </span>`);
-                document.write(`<span class="post_title">`);
-                  document.write(`<a href="${post_link}">${blog_posts[i].children[1].children[0].innerText.trim()}</a>`);
-                document.write(`</span>`);
-              document.write(`</td>`);
+              load_post_mobile();
             }
             document.write(`</tr>`);
 
@@ -157,6 +166,9 @@
         document.getElementsByTagName('table')[0].remove();
         document.getElementsByTagName('br')[0].remove();
       }
+
+      document.write(``);
+      document.write(`<br><p align="center" id="version"><em>v${version}</em></p>`);
     </script>
   </body>
 </html>

@@ -37,12 +37,7 @@
   <body>
     <script>
       function is_mobile() {
-        if (window.screen.width < window.screen.height) {
-          return true;
-        }
-        else {
-          return false;
-        }
+        return window.screen.width < window.screen.height;
       }
 
       function load_post() {
@@ -66,7 +61,7 @@
         document.write(`</td>`);
       }
 
-      const version = '1.3.4';
+      const version = '1.3.5';
 
       const blog_link = 'https://zurg3.github.io/jekyll-blog/';
 

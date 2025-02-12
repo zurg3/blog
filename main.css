@@ -1,0 +1,26 @@
+body {
+  font-family: Verdana, sans-serif;
+}
+
+a {
+  color: Blue;
+  text-decoration: none;
+}
+
+a:visited {
+  color: Blue;
+}
+
+a:hover {
+  color: Purple;
+  text-decoration: underline;
+}
+
+.iv_link_button {
+  width: 100%;
+  cursor: pointer;
+}
+
+#version {
+  color: Silver;
+}

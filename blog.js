@@ -3,27 +3,25 @@ function is_mobile() {
 }
 
 function load_post() {
-  document.write(`<td class="post_date">${post.date}</td>`);
-  document.write(`<td class="post_title">`);
-    document.write(`<a href="${post.link}">${post.title}</a>`);
-  document.write(`</td>`);
-  document.write(`<td class="post_id">${post.id}</td>`);
-  document.write(`<td class="iv_link">`);
-    document.write(`<input type="button" class="iv_link_button" value="Copy" data-clipboard-text="${post.iv_link}" data-clipboard-action="copy">`);
-  document.write(`</td>`);
+  document.write(`<tr>
+    <td class="post_date">${post.date}</td>
+    <td class="post_title"><a href="${post.link}">${post.title}</a></td>
+    <td class="post_id">${post.id}</td>
+    <td class="iv_link"><input type="button" class="iv_link_button" value="Copy" data-clipboard-text="${post.iv_link}" data-clipboard-action="copy"></td>
+  </tr>`);
 }
 
 function load_post_mobile() {
-  document.write(`<td>`);
-    document.write(`<span class="post_date">${post.date}</span>`);
-    document.write(`<span> </span>`);
-    document.write(`<span class="post_title">`);
-      document.write(`<a href="${post.link}">${post.title}</a>`);
-    document.write(`</span>`);
-  document.write(`</td>`);
+  document.write(`<tr>
+    <td>
+      <span class="post_date">${post.date}</span>
+      <span> </span>
+      <span class="post_title"><a href="${post.link}">${post.title}</a></span>
+    </td>
+  </tr>`);
 }
 
-const version = '1.4';
+const version = '1.4.1';
 
 const blog_link = 'https://zurg3.github.io/jekyll-blog/';
 
@@ -71,12 +69,12 @@ document.write(`<p id="post_counter" ${is_mobile() ? '' : 'align="center"'}>...<
 document.write(`<br>`);
 document.write(`<table ${is_mobile() ? '' : 'align="center"'}>`);
 if (!is_mobile()) {
-  document.write(`<tr>`);
-    document.write(`<th align="left">Date</th>`);
-    document.write(`<th align="left" width="500">Title</th>`);
-    document.write(`<th align="left">ID</th>`);
-    document.write(`<th align="left" title="Telegram Instant View link">IV link</th>`);
-  document.write(`</tr>`);
+  document.write(`<tr>
+    <th align="left">Date</th>
+    <th align="left" width="500">Title</th>
+    <th align="left">ID</th>
+    <th align="left" title="Telegram Instant View link">IV link</th>
+  </tr>`);
 }
 for (let i = 0; i < blog_posts.length; i++) {
   post.title = blog_posts[i].children[1].children[0].innerText.trim();
@@ -86,18 +84,12 @@ for (let i = 0; i < blog_posts.length; i++) {
   post.iv_link = `https://t.me/iv?url=${post.link}&rhash=${iv_rhash}`;
 
   if (!current_url.search) {
-    document.write(`<tr>`);
     !is_mobile() ? load_post() : load_post_mobile();
-    document.write(`</tr>`);
-
     post_counter++;
   }
   else if ((current_url.search && params.year)) {
     if (params.year === blog_posts[i].children[0].innerText.split('.')[2]) {
-      document.write(`<tr>`);
       !is_mobile() ? load_post() : load_post_mobile();
-      document.write(`</tr>`);
-
       post_counter++;
     }
   }

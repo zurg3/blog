@@ -1,7 +1,3 @@
-function is_mobile() {
-  return window.screen.width < window.screen.height;
-}
-
 function load_post() {
   document.write(`<tr>
     <td class="post_date">${post.date}</td>
@@ -21,7 +17,7 @@ function load_post_mobile() {
   </tr>`);
 }
 
-const version = '1.4.1';
+const version = '1.4.2';
 
 const blog_link = 'https://zurg3.github.io/jekyll-blog/';
 

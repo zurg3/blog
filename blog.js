@@ -17,7 +17,7 @@ function load_post_mobile() {
   </tr>`);
 }
 
-const version = '1.4.2';
+const version = '1.4.3';
 
 const blog_link = 'https://zurg3.github.io/jekyll-blog/';
 
@@ -39,6 +39,7 @@ let post_counter = 0;
 const post = {
   title: '',
   date: '',
+  year: '',
   id: '',
   link: '',
   iv_link: ''
@@ -51,12 +52,12 @@ const end_year = parseInt(blog_posts[0].children[0].innerText.split('.')[2], 10)
 
 document.write(`<h1 align="center">zurg3's blog</h1>`);
 document.write(`<p class="years" ${is_mobile() ? '' : 'align="center"'}>`);
-document.write(`${!current_url.search ? '<b>All</b>' : '<a href="index.html">All</a>'}`);
+document.write(`${!params.year ? '<b>All</b>' : '<a href="index.html">All</a>'}`);
 for (let i = end_year; i >= begin_year; i--) {
-  if ((current_url.search && params.year) && (parseInt(params.year, 10) === i)) {
+  if (params.year && parseInt(params.year, 10) === i) {
     document.write(` | <b>${i}</b>`);
   }
-  else if ((!current_url.search) || ((current_url.search && params.year) && (parseInt(params.year, 10) !== i))) {
+  else {
     document.write(` | <a href="index.html?year=${i}">${i}</a>`);
   }
 }
@@ -75,19 +76,14 @@ if (!is_mobile()) {
 for (let i = 0; i < blog_posts.length; i++) {
   post.title = blog_posts[i].children[1].children[0].innerText.trim();
   post.date = blog_posts[i].children[0].innerText;
+  post.year = post.date.split('.')[2];
   post.id = blog_posts[i].children[1].children[0].getAttribute('href').split('/')[2];
   post.link = `${blog_link}${post.id}`;
   post.iv_link = `https://t.me/iv?url=${post.link}&rhash=${iv_rhash}`;
 
-  if (!current_url.search) {
+  if (!params.year || (params.year && params.year === post.year)) {
     !is_mobile() ? load_post() : load_post_mobile();
     post_counter++;
-  }
-  else if ((current_url.search && params.year)) {
-    if (params.year === blog_posts[i].children[0].innerText.split('.')[2]) {
-      !is_mobile() ? load_post() : load_post_mobile();
-      post_counter++;
-    }
   }
 }
 document.write(`</table>`);

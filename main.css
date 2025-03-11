@@ -17,8 +17,19 @@ a:hover {
 }
 
 .iv_link_button {
+  background: inherit;
+  border: 1px solid Grey;
+  border-radius: 3px;
   width: 100%;
   cursor: pointer;
+}
+
+.iv_link_button:hover {
+  background: LightGrey;
+}
+
+.iv_link_button:active {
+  background: DarkGrey;
 }
 
 #version {

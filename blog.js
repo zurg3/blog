@@ -17,22 +17,16 @@ function load_post_mobile() {
   </tr>`);
 }
 
-const version = '1.4.4';
+const version = '1.4.5';
 
 const blog_link = 'https://zurg3.github.io/jekyll-blog/';
 
 const current_url = new URL(window.location);
 const params = Object.fromEntries(current_url.searchParams.entries());
 
-const xhr = new XMLHttpRequest();
-const parser = new DOMParser();
-
 new ClipboardJS('.iv_link_button');
 
-xhr.open('GET', blog_link, false);
-xhr.send();
-
-const blog = parser.parseFromString(xhr.responseText, 'text/html');
+const blog = parse_data_legacy(blog_link, 'html');
 const blog_posts = blog.getElementsByClassName('post-list')[0].children;
 let post_counter = 0;
 

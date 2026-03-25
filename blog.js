@@ -17,7 +17,9 @@ function load_post_mobile() {
   </tr>`);
 }
 
-const version = '1.4.5';
+const version = '1.4.6';
+
+const {is_mobile, parse_data_legacy} = lib;
 
 const blog_link = 'https://zurg3.github.io/jekyll-blog/';
 

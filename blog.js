@@ -17,7 +17,7 @@ function load_post_mobile() {
   </tr>`);
 }
 
-const version = '1.4.6';
+const version = '1.4.7';
 
 const {is_mobile, parse_data_legacy} = lib;
 

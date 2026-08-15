@@ -21,7 +21,6 @@ a:hover {
   border: 1px solid Grey;
   border-radius: 3px;
   width: 100%;
-  cursor: pointer;
 }
 
 .iv_link_button:hover {

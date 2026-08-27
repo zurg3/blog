@@ -1,95 +1,106 @@
-function load_post() {
-  document.write(`<tr>
-    <td class="post_date">${post.date}</td>
-    <td class="post_title"><a href="${post.link}">${post.title}</a></td>
-    <td class="post_id">${post.id}</td>
-    <td class="iv_link"><input type="button" class="iv_link_button" value="Copy" data-clipboard-text="${post.iv_link}" data-clipboard-action="copy"></td>
-  </tr>`);
-}
+const {parse_data, is_mobile, append_html, copy_text} = lib;
 
-function load_post_mobile() {
-  document.write(`<tr>
-    <td>
-      <span class="post_date">${post.date}</span>
-      <span> </span>
-      <span class="post_title"><a href="${post.link}">${post.title}</a></span>
-    </td>
-  </tr>`);
-}
+const version = '1.5';
 
-const version = '1.4.7';
+async function load_blog() {
+  const current_url = new URL(window.location);
+  const params = Object.fromEntries(current_url.searchParams.entries());
 
-const {is_mobile, parse_data_legacy} = lib;
+  const blog_link = 'https://zurg3.github.io/jekyll-blog/';
+  const iv_rhash = 'e779dfb8ed6d71';
 
-const blog_link = 'https://zurg3.github.io/jekyll-blog/';
+  const blog = await parse_data(blog_link, 'html');
+  const blog_posts = Array.from(blog.querySelector('.post-list').children);
+  let post_counter = 0;
 
-const current_url = new URL(window.location);
-const params = Object.fromEntries(current_url.searchParams.entries());
+  const post = {
+    title: '',
+    date: '',
+    year: '',
+    id: '',
+    link: '',
+    iv_link: ''
+  };
 
-new ClipboardJS('.iv_link_button');
+  const years = [];
 
-const blog = parse_data_legacy(blog_link, 'html');
-const blog_posts = blog.getElementsByClassName('post-list')[0].children;
-let post_counter = 0;
+  const table = [];
+  const table_header = [
+    '<tr>',
+      '<th>Date</th>',
+      '<th width="500">Title</th>',
+      '<th>ID</th>',
+      '<th title="Telegram Instant View link">IV link</th>',
+    '</tr>'
+  ];
+  const table_data = [];
 
-const post = {
-  title: '',
-  date: '',
-  year: '',
-  id: '',
-  link: '',
-  iv_link: ''
-};
+  const first_year = parseInt(blog_posts.at(-1).children[0].innerText.split('.')[2], 10);
+  const last_year = parseInt(blog_posts.at(0).children[0].innerText.split('.')[2], 10);
 
-const iv_rhash = 'e779dfb8ed6d71';
-
-const begin_year = parseInt(blog_posts[blog_posts.length - 1].children[0].innerText.split('.')[2], 10);
-const end_year = parseInt(blog_posts[0].children[0].innerText.split('.')[2], 10);
-
-document.write(`<h1 align="center">zurg3's blog</h1>`);
-document.write(`<p class="years" ${is_mobile() ? '' : 'align="center"'}>`);
-document.write(`${!params.year ? '<b>All</b>' : '<a href="index.html">All</a>'}`);
-for (let i = end_year; i >= begin_year; i--) {
-  if (params.year && parseInt(params.year, 10) === i) {
-    document.write(` | <b>${i}</b>`);
+  for (let year = last_year; year >= first_year; year--) {
+    if (params.year && parseInt(params.year, 10) === year) {
+      years.push(` | <b>${year}</b>`);
+    }
+    else {
+      years.push(` | <a href="index.html?year=${year}">${year}</a>`);
+    }
   }
-  else {
-    document.write(` | <a href="index.html?year=${i}">${i}</a>`);
+
+  for (let i = 0; i < blog_posts.length; i++) {
+    post.title = blog_posts[i].children[1].children[0].innerText.trim();
+    post.date = blog_posts[i].children[0].innerText;
+    post.year = post.date.split('.')[2];
+    post.id = blog_posts[i].children[1].children[0].getAttribute('href').split('/')[2];
+    post.link = `${blog_link}${post.id}`;
+    post.iv_link = `https://t.me/iv?url=${post.link}&rhash=${iv_rhash}`;
+
+    if (!params.year || (params.year && params.year === post.year)) {
+      table_data.push('<tr>');
+      if (!is_mobile()) {
+        table_data.push(
+          `<td class="post_date">${post.date}</td>`,
+          `<td class="post_title"><a href="${post.link}">${post.title}</a></td>`,
+          `<td class="post_id">${post.id}</td>`,
+          `<td class="iv_link"><input type="button" class="iv_link_button" value="Copy" onclick="copy_text('${post.iv_link}')"></td>`
+        );
+      }
+      else {
+        table_data.push(
+          `<td>`,
+            `<span class="post_date">${post.date}</span>`,
+            `<span> </span>`,
+            `<span class="post_title"><a href="${post.link}">${post.title}</a></span>`,
+          `</td>`
+        );
+      }
+      table_data.push('</tr>');
+
+      post_counter++;
+    }
   }
-}
-document.write(`</p>`);
-document.write(`<p id="post_counter" ${is_mobile() ? '' : 'align="center"'}>...</p>`);
-document.write(`<br>`);
-document.write(`<table ${is_mobile() ? '' : 'align="center"'}>`);
-if (!is_mobile()) {
-  document.write(`<tr>
-    <th align="left">Date</th>
-    <th align="left" width="500">Title</th>
-    <th align="left">ID</th>
-    <th align="left" title="Telegram Instant View link">IV link</th>
-  </tr>`);
-}
-for (let i = 0; i < blog_posts.length; i++) {
-  post.title = blog_posts[i].children[1].children[0].innerText.trim();
-  post.date = blog_posts[i].children[0].innerText;
-  post.year = post.date.split('.')[2];
-  post.id = blog_posts[i].children[1].children[0].getAttribute('href').split('/')[2];
-  post.link = `${blog_link}${post.id}`;
-  post.iv_link = `https://t.me/iv?url=${post.link}&rhash=${iv_rhash}`;
 
-  if (!params.year || (params.year && params.year === post.year)) {
-    !is_mobile() ? load_post() : load_post_mobile();
-    post_counter++;
+  if (post_counter >= 1) {
+    table.push(
+      '<br>',
+      '<table>',
+        `${!is_mobile() ? table_header.join('') : ''}`,
+        table_data.join(''),
+      '</table>'
+    );
   }
+
+  append_html(document.body,
+    `<h1 id="title">zurg3's blog</h1>`,
+    '<p id="years">',
+      `${!params.year ? '<b>All</b>' : '<a href="index.html">All</a>'}`,
+      years.join(''),
+    '</p>',
+    `<p id="post_counter">${post_counter} ${post_counter === 1 ? 'post' : 'posts'}</p>`,
+    table.join(''),
+    '<br>',
+    `<p id="version"><i>v${version}</i></p>`
+  );
 }
-document.write(`</table>`);
 
-document.getElementById('post_counter').innerText = `${post_counter} ${post_counter === 1 ? 'post' : 'posts'}`;
-
-if (post_counter === 0) {
-  document.getElementsByTagName('table')[0].remove();
-  document.getElementsByTagName('br')[0].remove();
-}
-
-document.write(``);
-document.write(`<br><p align="center" id="version"><i>v${version}</i></p>`);
+load_blog();
